@@ -60,10 +60,7 @@ This is a personal repo of vim shortcuts and tips so I don't forget them
 * [M: jump to ending of previous method in java like language
 * ]M: jump to ending of next method in java like language
 
-[(, ])  - same for ( ) block
-[#, ]# - jump to prev / next #ifdef, #else, #endif
-[* or [/, ]* or ]/ - jump to beginning / end of a C-style comment /*  */ 
-[m, ]m, [M, ]M - jump to begining / end of a next / previous C++/Java... method
+
 small word vs big WORD
 -----------------------
 * A word is always delimited by a space
