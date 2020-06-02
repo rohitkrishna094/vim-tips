@@ -59,6 +59,8 @@ This is a personal repo of vim shortcuts and tips so I don't forget them
 * ]m: jump to starting of next method in java like language
 * [M: jump to ending of previous method in java like language
 * ]M: jump to ending of next method in java like language
+* ZQ: Quit without saving
+* ZZ: quit with saving
 
 
 small word vs big WORD
