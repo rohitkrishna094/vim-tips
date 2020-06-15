@@ -183,4 +183,195 @@ The syntax for defining a range is very flexible. We can mix and match line numb
 * :[range]write!{cmd} -> Execute {cmd} in the shell with [range] lines as stdin
 * :[range]!filter -> Filter the specified [range] through external program {filter}
 
+---
 ## Navigate Inside Files with Motions
+
+* h: One column left
+* l: One column right
+* j: One line down
+* k: One line up
+
+* Real lines vs display lines(display lines can be wrapped)
+* gj: Down one display line
+* gk: Up one display line
+* g0: To first character of display line
+* g^: To first nonblank character of display line
+* g$: To end of display line
+
+#### Move word wise
+
+* w: Forward to start of next word
+* b: Backward to start of current/previous word
+* e: Forward to end of current/next word
+* ge: Backward to end of previous word
+
+#### word vs WORD
+
+* A word consists of a sequence of letters, digits and underscores, or as a sequence of other nonblank characters separated with whitespace. 
+* A WORD consists of a sequence of nonblank characters separated with whitespace
+* So you can use W, B, E and gE
+
+#### Find by character
+
+* f{char}: Forward to the next occurrence of {char}
+* F{char}: Backward to the previous occurrence of {char}
+* t{char}: Forward to the character before the next occurrence of {char}
+* T{char}: Backward to the character after the previous occurrence of {char}
+* ; : Repeat the last character search command
+* , : Reverse the last character search command
+
+#### Search to navigate
+
+* /ta : searches for ta.
+* Now you can press n And N to navigate between all matches of ta
+* Operate with search motion: 
+  * v/ge<CR>hd will allow you use search motion to visually select and delete
+  * d/ge<CR> will allow you to delete until ge
+
+#### Precision Text Objects
+
+* a) or ab: a pair of (parenthesis)
+* i) or ib: inside of (parenthesis)
+* a} or aB: a pair of {braces}
+* i} or iB: inside of {braces}
+* a]: a pair of [brackets]
+* i]: inside of [brackets]
+* a>: a pair of <angle brackets>
+* i>: inside of <angle brackets>
+* a': A pair of 'single quotes'
+* i': Inside of 'single quotes'
+* a": A pair of "double quotes"
+* i": Inside of "double quotes"
+* a\`: a pair of `backticks`
+* i\`: Inside of `backticks`
+* at: A pair of xml tags 
+* it: Inside of xml tags
+
+#### Delete around or change inside
+
+* iw: Current word
+* aw: Current word plus one space
+* iW: Current WORD
+* aW: Current WORD plus one space
+* i$: Current Sentence
+* a$: Current Sentence plus one space
+* ip: Current para
+* ap: Current para with one space
+
+#### Marks
+
+* The m{a-zA-Z} command marks the current cursor location with the designated letter. Lowercase marks are local to each individual buffer while uppercase marks are globally accessible.
+* '{mark}: moves to the line where a mark was set.
+* `{mark}: moves to exact position where a mark was set
+
+##### Automatic Marks
+
+* ``: Position before the last jump within current file
+* `.: Location of last change
+* `^: location of last insertion
+* `[: Start of last change or yank
+* `]: end of last change of yank
+* `<: start of last visual selection
+* `>: end of last visual selection
+* :marks -> shows you the list of all marks that you have
+
+#### Jump b/w matching parentheses
+
+* % can be used to jump between matching things.
+* Use matchit plugin to jump between html tags as well.
+
+---
+## Copy and Paste
+
+* xp: trick to transpose the next two characters
+* ddp: trick to transpose current line with next line 
+* yyp: duplicating lines
+
+#### Registers
+
+* Delete, yank and put commands all interact with one of vims registers. If not specified, vim will use unnamed register("")
+* "ayiw: would yank inner word into register a 
+* Now we can paste it using "ap
+
+#### The yank register("0)
+
+* When we use the y{motion} command, the specified text is copied not only into the unnamed register but also into the yank register which is addressed by the 0 symbol.
+* [Yank Trick]: yiw, diw, "0p will allow us to paste from 0 register even though diw just corrupted our unnamed register
+
+#### The black hole register("_)
+
+* this register is a place from which nothing returns. If we run "_d{motion} then vim deletes the specified text without saving a copy of it.
+
+#### System clipboard("+) and selection("*) registers
+
+* "+ -> references whatever is copied in your system clipboard. all the above registers are internal to vim
+* "+ -> The X11 clipboard, used with cut,copy and paste
+* "* -> the x11 primary used with middle mouse button(most recently selected text), doesnt work on windows so this is same as "+
+
+#### The expression register("=)
+
+* "= -> drops you into command mode where you can run any script that returns a string or a thing that can be converted to string(like a multiplication for example). and now if you press p, it will paste that value. try "=3*5p -> this will paste 15 in your editor
+
+#### More registers
+
+* "%: name of the current file
+* "#: Name of the alternate file
+* ".: Last inserted text
+* ": -> Last ex command 
+* "/ : last search pattern
+
+#### Swap two words
+
+* de -> delete first word
+* mm -> set mark so we can come back here
+* ww -> or any other motion to go to next word to be swapped
+* ve -> select that word
+* p -> paste
+* `m -> come back to mark
+* P -> Paste before cursor 
+
+#### Paste from a register
+
+* p -> puts after cursor
+* P -> puts before cursor
+
+* From inset mode, we can insert the contents of unnamed register by pressing <C-r>".
+* We can also use <C-r>0 to paste from default register.
+
+* gp and gP -> these also put text before or after just like p or P, but they leave the cursor positioned at the end of the pasted text instead of at the beginning. Quite useful when duplicating a range of lines.
+
+---
+## Macros
+
+#### Record and execute a macro
+
+* q key functions both as the record button and the stop button. 
+* q{register}  -> starts recording the macro on {register}
+* Press q again to stop recording
+* :reg a -> we can inspect the contents of the register a by typing this command
+* @{register} -> To playback we use this
+* Once you played the macro, you can use @@ to repeat the macro again
+* 10@a -> will run macro @a 10 times
+
+#### Execute macro in seris
+* 10@a -> will execute in series and if macro fails, it wont continue
+
+#### Execute macro in parallel
+* record macro, then make visual selection
+* press : which will show up as <','>
+* <','>normal @a -> will run in parallel. It will fail on some lines but will still run it on all lines in visual selection
+
+#### Append commands to a macro
+
+* :reg a -> to check contents of this register
+* Press qa -> this will not change anything
+* press qA -> now you can make changes and these changes are appended to your macro
+
+#### Evaluate an iterator to number items in a list
+
+* Say we have an unordered list and we want to add number to it. We can use expression register or increment or decrement shortcuts(<C-a> and <C-x>)
+* :let i=1 -> init i to 1
+* qa -> start macro recording on a register
+* I<C-r>=i<CR><ESC> -> go to start(I), invoke expression register(<C-r>=) type i and hit enter and then escape
+* :let i+=1 -> increment i
+* q -> stop macro recording
